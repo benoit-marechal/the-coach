@@ -34,7 +34,7 @@ Definition of done :
 - [x] Tests Node du moteur verts.
 - [x] Page verifiee en navigateur.
 - [x] Repo GitHub public `benoit-marechal/the-coach` cree.
-- [x] GitHub Pages active depuis `main` et `/`.
+- [x] GitHub Pages active pour `main`.
 - [x] URL cible : `https://benoit-marechal.github.io/the-coach/`.
 
 Livraison :
@@ -51,6 +51,7 @@ Livraison :
 - `timed` demarre automatiquement aussi, car l'utilisateur demande que l'app lance la seance.
 - Musique : Web Audio genere localement apres clic utilisateur, pas d'audio externe.
 - Resume : Markdown dans un `textarea`, avec bouton copier.
+- Deploiement : GitHub Actions Pages, car le build legacy GitHub Pages echouait instantanement sans log exploitable. L'app reste statique, sans build applicatif.
 
 ## Backlog
 

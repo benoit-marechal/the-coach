@@ -9,7 +9,7 @@
 - Tailwind via CDN autorise.
 - CSS local pour les interactions et l'identite visuelle.
 - 100 % client-side.
-- Deploiement GitHub Pages depuis `main` et `/`.
+- Deploiement GitHub Pages. Le LOT 1 utilise GitHub Actions Pages si le mode legacy echoue.
 
 ## Contrat seance LOT 1
 
