@@ -12,7 +12,7 @@ Mettre en ligne une mini-SPA gratuite sur GitHub Pages :
 
 Interaction : 100 % client-side. Pas de compte, pas de backend, pas de donnees envoyees.
 
-## LOT 1 - Publication initiale
+## LOT 1 - Publication initiale - SHIPPED (2026-06-09)
 
 Delai : cette session.
 
@@ -30,12 +30,17 @@ Qualite minimale :
 
 Definition of done :
 
-- [ ] App locale testee.
-- [ ] Tests Node du moteur verts.
-- [ ] Page verifiee en navigateur.
-- [ ] Repo GitHub public `benoit-marechal/the-coach` cree.
-- [ ] GitHub Pages active depuis `main` et `/`.
-- [ ] URL cible : `https://benoit-marechal.github.io/the-coach/`.
+- [x] App locale testee.
+- [x] Tests Node du moteur verts.
+- [x] Page verifiee en navigateur.
+- [x] Repo GitHub public `benoit-marechal/the-coach` cree.
+- [x] GitHub Pages active depuis `main` et `/`.
+- [x] URL cible : `https://benoit-marechal.github.io/the-coach/`.
+
+Livraison :
+
+- Repo : `https://github.com/benoit-marechal/the-coach`
+- Production : `https://benoit-marechal.github.io/the-coach/`
 
 ## Decisions
 
