@@ -24,16 +24,26 @@
     </script>
     <script defer src="app.js"></script>
   </head>
-  <body class="min-h-screen bg-stone-950 text-stone-100 antialiased font-sans">
-    <main class="mx-auto grid min-h-screen max-w-5xl gap-5 px-4 py-5 sm:px-6 lg:grid-cols-[1fr_360px]">
-      <section class="grid gap-5">
-        <header class="topbar reveal">
-          <div>
+  <body class="font-sans antialiased">
+    <main class="page">
+      <section class="coach-screen" aria-label="Seance en cours">
+        <header class="app-header">
+          <div class="brand">
             <p class="eyebrow">The Coach</p>
             <h1 id="workoutTitle">The Coach</h1>
             <p id="athleteNote" class="subtitle"></p>
           </div>
-          <button id="music" class="icon-command" type="button">Musique</button>
+          <div class="header-actions">
+            <label class="theme-control" for="themeSelect">
+              <span>Theme</span>
+              <select id="themeSelect">
+                <option value="system">System</option>
+                <option value="light">Light</option>
+                <option value="dark">Dark</option>
+              </select>
+            </label>
+            <button id="music" class="music-link" type="button">Musique YouTube</button>
+          </div>
         </header>
 
         <p id="error" class="error" hidden></p>
@@ -42,69 +52,80 @@
           <div id="progress" class="progress-bar"></div>
         </div>
 
-        <section class="current reveal" aria-live="polite">
-          <div class="status">
-            <span id="stepType">Serie</span>
-            <span id="running">En attente</span>
-            <span id="stepCount">1/1</span>
-          </div>
-          <p id="block" class="block-name">Seance</p>
-          <h2 id="title">Chargement</h2>
-          <p id="detail" class="detail"></p>
-          <div id="timer" class="timer">00:00</div>
-          <p id="cue" class="cue"></p>
-        </section>
+        <div class="main-grid">
+          <section class="current" aria-live="polite">
+            <div class="status">
+              <span id="stepType">Serie</span>
+              <span id="running">En attente</span>
+              <span id="stepCount">1/1</span>
+            </div>
+            <p id="block" class="block-name">Seance</p>
+            <h2 id="title">Chargement</h2>
+            <p id="detail" class="detail"></p>
+            <div id="timer" class="timer">00:00</div>
+            <p id="cue" class="cue"></p>
 
-        <section class="controls reveal" aria-label="Actions">
-          <button id="mainAction" class="primary" type="button">Etape faite</button>
-          <button id="next" type="button">Suivant</button>
-          <button id="previous" type="button">Retour</button>
-          <button id="reset" type="button">Reset</button>
-        </section>
+            <section class="controls" aria-label="Actions">
+              <button id="mainAction" class="primary" type="button">Etape faite</button>
+              <button id="next" type="button">Suivant</button>
+              <button id="previous" type="button">Retour</button>
+              <button id="reset" type="button">Reset</button>
+            </section>
 
-        <section class="controls compact" aria-label="Pauses rapides">
-          <div id="forceRests" class="quick-rests"></div>
-          <button id="addTime" type="button">+30 s</button>
-        </section>
+            <section class="quick-row" aria-label="Pauses rapides">
+              <div id="forceRests" class="quick-rests"></div>
+              <button id="addTime" type="button">+30 s</button>
+            </section>
 
-        <section class="note-panel">
-          <label for="note">Note sur cette etape</label>
-          <textarea id="note" rows="4" placeholder="Ex: RPE 8, douleur 0/10, reps propres, souffle revenu en 45 s..."></textarea>
-        </section>
+            <section class="note-panel">
+              <label for="note">Note sur cette etape</label>
+              <textarea id="note" rows="3" placeholder="Ex: RPE 8, douleur 0/10, reps propres..."></textarea>
+            </section>
+          </section>
 
-        <section id="summaryPanel" class="summary" hidden>
-          <div class="section-head">
-            <h2>Resume Markdown</h2>
-            <button id="copyMarkdown" type="button">Copier</button>
-          </div>
-          <textarea id="markdown" class="mono-area" rows="14" readonly></textarea>
-        </section>
+          <section class="plan-panel" aria-label="Seance complete">
+            <div class="section-head">
+              <div>
+                <p class="eyebrow">Plan complet</p>
+                <h2>35 actions</h2>
+              </div>
+              <span class="hint">Clique une action ou une pause</span>
+            </div>
+            <div id="planList" class="plan-groups"></div>
+          </section>
+        </div>
       </section>
 
-      <aside class="side reveal" style="--delay: 100ms">
-        <section class="panel">
-          <h2>Plan autour de maintenant</h2>
-          <ol id="planList" class="plan-list"></ol>
-        </section>
+      <section id="summaryPanel" class="summary annex" hidden>
+        <div class="section-head">
+          <h2>Resume Markdown</h2>
+          <button id="copyMarkdown" type="button">Copier</button>
+        </div>
+        <textarea id="markdown" class="mono-area" rows="14" readonly></textarea>
+      </section>
 
+      <section class="annexes" aria-label="Informations annexes">
         <section class="panel">
           <div class="section-head">
             <h2>JSON de seance</h2>
             <button id="loadJson" type="button">Charger</button>
           </div>
           <textarea id="jsonInput" class="mono-area" rows="12"></textarea>
-          <label for="shareUrl" class="share-label">URL partageable</label>
-          <div class="copy-row">
-            <input id="shareUrl" readonly>
+        </section>
+
+        <section class="panel">
+          <div class="section-head">
+            <h2>URL partageable</h2>
             <button id="copyShareUrl" type="button">Copier</button>
           </div>
+          <input id="shareUrl" readonly>
         </section>
 
         <section class="panel">
           <h2>Exemple</h2>
           <textarea id="exampleJson" class="mono-area" rows="10" readonly></textarea>
         </section>
-      </aside>
+      </section>
     </main>
   </body>
 </html>

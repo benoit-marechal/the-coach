@@ -2,6 +2,7 @@
   const MAX_STEPS = 120;
   const MIN_SECONDS = 1;
   const MAX_SECONDS = 7200;
+  const MUSIC_PLAYLIST_URL = "https://www.youtube.com/playlist?list=PLRPR8uJQx5tFv7_Uez_8W1tK2jtoC9A3q";
 
   const DEFAULT_WORKOUT = {
     v: 1,
@@ -12,6 +13,8 @@
     add: 30,
     steps: [
       { k: "work", b: "Swings", t: "Swings 2 mains", d: "16 reps", c: "Hanches explosives, dos neutre." },
+      { k: "work", b: "Swings", t: "Swings 2 mains", d: "16 reps", c: "Reste explosif, stop si le bas du dos prend." },
+      { k: "work", b: "Swings", t: "Swings 2 mains", d: "16 reps", c: "Garde 2 reps en reserve." },
       { k: "rest", b: "Swings", t: "Pause", s: 90 },
       { k: "work", b: "Swings", t: "Swings 2 mains", d: "12 a 16 reps", c: "Garde 2 reps en reserve." },
       { k: "rest", b: "Transition", t: "Pause avant force", s: 120 },
@@ -21,10 +24,29 @@
       { k: "rest", b: "Force 1/3", t: "Pause", s: 60 },
       { k: "work", b: "Force 1/3", t: "Kettlebell deadlift", d: "8 a 10 reps" },
       { k: "rest", b: "Force 1/3", t: "Pause avant tour 2", s: 90 },
-      { k: "work", b: "Carry", t: "Suitcase hold/carry droite", d: "45 s", s: 45 },
-      { k: "rest", b: "Carry", t: "Pause", s: 30 },
-      { k: "work", b: "Carry", t: "Suitcase hold/carry gauche", d: "45 s", s: 45 },
+      { k: "work", b: "Force 2/3", t: "Goblet squat", d: "8 a 10 reps" },
+      { k: "rest", b: "Force 2/3", t: "Pause", s: 60 },
+      { k: "work", b: "Force 2/3", t: "Row 1 bras", d: "8 gauche + 8 droit" },
+      { k: "rest", b: "Force 2/3", t: "Pause", s: 60 },
+      { k: "work", b: "Force 2/3", t: "Kettlebell deadlift", d: "8 a 10 reps" },
+      { k: "rest", b: "Force 2/3", t: "Pause avant tour 3", s: 90 },
+      { k: "work", b: "Force 3/3", t: "Goblet squat", d: "8 a 10 reps" },
+      { k: "rest", b: "Force 3/3", t: "Pause", s: 60 },
+      { k: "work", b: "Force 3/3", t: "Row 1 bras", d: "8 gauche + 8 droit" },
+      { k: "rest", b: "Force 3/3", t: "Pause", s: 60 },
+      { k: "work", b: "Force 3/3", t: "Kettlebell deadlift", d: "8 a 10 reps" },
+      { k: "rest", b: "Transition", t: "Pause avant carries", s: 120 },
+      { k: "work", b: "Carry 1/2", t: "Suitcase hold/carry droite", d: "45 s", s: 45 },
+      { k: "rest", b: "Carry 1/2", t: "Pause", s: 30 },
+      { k: "work", b: "Carry 1/2", t: "Suitcase hold/carry gauche", d: "45 s", s: 45 },
+      { k: "rest", b: "Carry 1/2", t: "Pause avant tour 2", s: 60 },
+      { k: "work", b: "Carry 2/2", t: "Suitcase hold/carry droite", d: "45 s", s: 45 },
+      { k: "rest", b: "Carry 2/2", t: "Pause", s: 30 },
+      { k: "work", b: "Carry 2/2", t: "Suitcase hold/carry gauche", d: "45 s", s: 45 },
+      { k: "rest", b: "Retour au calme", t: "Pause avant retour au calme", s: 60 },
       { k: "timed", b: "Retour au calme", t: "Respiration lente", d: "2 min", s: 120 },
+      { k: "timed", b: "Retour au calme", t: "Etirement hanches/ischios droite", d: "30 s", s: 30 },
+      { k: "timed", b: "Retour au calme", t: "Etirement hanches/ischios gauche", d: "30 s", s: 30 },
     ],
   };
 
@@ -328,6 +350,23 @@
     return completeCurrentStep(state);
   }
 
+  function goToStep(state, index) {
+    const nextIndex = Math.min(state.workout.steps.length, Math.max(0, Math.round(Number(index) || 0)));
+    return enterStep({ ...state, running: false, remainingSeconds: 0 }, nextIndex);
+  }
+
+  function groupStepsByBlock(steps) {
+    return steps.reduce((groups, step, index) => {
+      const last = groups[groups.length - 1];
+      if (!last || last.block !== step.block) {
+        groups.push({ block: step.block, steps: [{ step, index }] });
+      } else {
+        last.steps.push({ step, index });
+      }
+      return groups;
+    }, []);
+  }
+
   function formatTime(totalSeconds) {
     const safe = Math.max(0, Math.round(Number(totalSeconds) || 0));
     const minutes = Math.floor(safe / 60);
@@ -392,6 +431,7 @@
 
   const api = {
     DEFAULT_WORKOUT,
+    MUSIC_PLAYLIST_URL,
     addTime,
     buildMarkdownSummary,
     completeCurrentStep,
@@ -401,8 +441,10 @@
     encodeWorkout,
     forceRest,
     formatTime,
+    goToStep,
     goToNext,
     goToPrevious,
+    groupStepsByBlock,
     normalizeWorkout,
     parseWorkoutFromUrl,
     progressPercent,
@@ -447,13 +489,13 @@
     stepCount: $("#stepCount"),
     stepType: $("#stepType"),
     summaryPanel: $("#summaryPanel"),
+    themeSelect: $("#themeSelect"),
     timer: $("#timer"),
     title: $("#title"),
     workoutTitle: $("#workoutTitle"),
   };
 
-  let audioContext = null;
-  let musicNodes = [];
+  const THEME_STORAGE_KEY = "the-coach-theme";
   let state = createInitialState(parseWorkoutFromUrl(window.location.search).workout);
   let previousIndex = state.currentIndex;
 
@@ -486,20 +528,35 @@
 
   function renderPlanList() {
     clearNode(elements.planList);
-    const start = Math.max(0, state.currentIndex - 2);
-    const end = Math.min(state.workout.steps.length, state.currentIndex + 5);
 
-    state.workout.steps.slice(start, end).forEach((step, offset) => {
-      const index = start + offset;
-      const item = document.createElement("li");
-      if (index < state.currentIndex) item.classList.add("is-done");
-      if (index === state.currentIndex) item.classList.add("is-current");
-      appendTextNode(item, "span", String(index + 1));
-      const content = document.createElement("div");
-      appendTextNode(content, "strong", step.title);
-      appendTextNode(content, "small", step.detail || (step.seconds ? formatTime(step.seconds) : stepLabel(step)));
-      item.appendChild(content);
-      elements.planList.appendChild(item);
+    groupStepsByBlock(state.workout.steps).forEach((group) => {
+      const groupNode = document.createElement("section");
+      groupNode.className = "plan-group";
+      appendTextNode(groupNode, "h3", group.block, "plan-group-title");
+
+      const actions = document.createElement("div");
+      actions.className = "plan-actions";
+
+      group.steps.forEach(({ step, index }) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "plan-step";
+        if (index < state.currentIndex || state.done) button.classList.add("is-done");
+        if (index === state.currentIndex && !state.done) button.classList.add("is-current");
+        if (step.kind === "rest") button.classList.add("is-rest");
+        button.addEventListener("click", () => setState(goToStep(state, index)));
+
+        appendTextNode(button, "span", String(index + 1), "plan-step-number");
+        const text = document.createElement("span");
+        text.className = "plan-step-text";
+        appendTextNode(text, "strong", step.title, "plan-step-title");
+        appendTextNode(text, "small", step.detail || (step.seconds ? formatTime(step.seconds) : stepLabel(step)), "plan-step-meta");
+        button.appendChild(text);
+        actions.appendChild(button);
+      });
+
+      groupNode.appendChild(actions);
+      elements.planList.appendChild(groupNode);
     });
   }
 
@@ -608,56 +665,23 @@
     }
   }
 
-  function startMusic() {
-    if (audioContext) {
-      musicNodes.forEach((node) => {
-        try {
-          node.stop();
-        } catch (error) {
-          node.disconnect();
-        }
-      });
-      musicNodes = [];
-      audioContext.close();
-      audioContext = null;
-      elements.music.textContent = "Musique";
-      return;
+  function openMusicPlaylist() {
+    window.open(MUSIC_PLAYLIST_URL, "_blank", "noopener,noreferrer");
+  }
+
+  function applyTheme(choice) {
+    const theme = ["system", "light", "dark"].includes(choice) ? choice : "system";
+    elements.themeSelect.value = theme;
+    if (theme === "system") {
+      document.documentElement.removeAttribute("data-theme");
+    } else {
+      document.documentElement.setAttribute("data-theme", theme);
     }
+    localStorage.setItem(THEME_STORAGE_KEY, theme);
+  }
 
-    const AudioCtor = window.AudioContext || window.webkitAudioContext;
-    if (!AudioCtor) {
-      elements.error.hidden = false;
-      setText(elements.error, "Audio non supporte par ce navigateur.");
-      return;
-    }
-
-    audioContext = new AudioCtor();
-    const master = audioContext.createGain();
-    master.gain.value = 0.08;
-    master.connect(audioContext.destination);
-
-    const scheduleBeat = () => {
-      if (!audioContext) return;
-      const now = audioContext.currentTime;
-      [0, 0.42, 0.84, 1.26].forEach((offset, index) => {
-        const osc = audioContext.createOscillator();
-        const gain = audioContext.createGain();
-        osc.type = index === 0 ? "sawtooth" : "square";
-        osc.frequency.value = index === 0 ? 96 : 148;
-        gain.gain.setValueAtTime(index === 0 ? 0.9 : 0.45, now + offset);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + offset + 0.12);
-        osc.connect(gain);
-        gain.connect(master);
-        osc.start(now + offset);
-        osc.stop(now + offset + 0.14);
-        musicNodes.push(osc);
-      });
-    };
-
-    scheduleBeat();
-    const interval = setInterval(scheduleBeat, 1680);
-    musicNodes.push({ stop: () => clearInterval(interval), disconnect: () => {} });
-    elements.music.textContent = "Stop musique";
+  function loadTheme() {
+    applyTheme(localStorage.getItem(THEME_STORAGE_KEY) || "system");
   }
 
   elements.mainAction.addEventListener("click", () => {
@@ -674,7 +698,8 @@
   elements.reset.addEventListener("click", () => setState(createInitialState(state.workout)));
   elements.note.addEventListener("input", () => setState(updateCurrentNote(state, elements.note.value)));
   elements.loadJson.addEventListener("click", loadFromText);
-  elements.music.addEventListener("click", startMusic);
+  elements.music.addEventListener("click", openMusicPlaylist);
+  elements.themeSelect.addEventListener("change", () => applyTheme(elements.themeSelect.value));
 
   $("#copyMarkdown").addEventListener("click", async () => {
     elements.markdown.select();
@@ -701,6 +726,7 @@
 
   const parsed = parseWorkoutFromUrl(window.location.search);
   elements.exampleJson.value = JSON.stringify(DEFAULT_WORKOUT, null, 2);
+  loadTheme();
   loadWorkout(parsed.workout, false);
   if (parsed.error) {
     elements.error.hidden = false;

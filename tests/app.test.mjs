@@ -118,6 +118,48 @@ test("auto-runs rest and timed steps when entering them", () => {
   assert.equal(timed.remainingSeconds, 3);
 });
 
+test("can jump directly to any workout step", () => {
+  const app = loadApp();
+  const state = app.createInitialState(
+    app.normalizeWorkout({
+      title: "Jump",
+      steps: [
+        { k: "work", b: "A", t: "Row" },
+        { k: "rest", b: "A", t: "Pause", s: 60 },
+        { k: "timed", b: "B", t: "Carry", s: 45 },
+      ],
+    }),
+  );
+
+  const jumped = app.goToStep(state, 2);
+
+  assert.equal(app.currentStep(jumped).title, "Carry");
+  assert.equal(jumped.running, true);
+  assert.equal(jumped.remainingSeconds, 45);
+});
+
+test("groups the full plan by visible workout rounds", () => {
+  const app = loadApp();
+  const workout = app.normalizeWorkout(app.DEFAULT_WORKOUT);
+  const groups = app.groupStepsByBlock(workout.steps);
+
+  assert.equal(workout.steps.length, 35);
+  assert.equal(
+    JSON.stringify(groups.map((group) => group.block)),
+    JSON.stringify([
+      "Swings",
+      "Transition",
+      "Force 1/3",
+      "Force 2/3",
+      "Force 3/3",
+      "Transition",
+      "Carry 1/2",
+      "Carry 2/2",
+      "Retour au calme",
+    ]),
+  );
+});
+
 test("stores notes per step without losing navigation state", () => {
   const app = loadApp();
   const state = app.createInitialState(
@@ -208,4 +250,10 @@ test("default workout avoids pushups", () => {
 
   assert.equal(titles.some((title) => /pompes|push/i.test(title)), false);
   assert.equal(/pompes|push/i.test(JSON.stringify(app.DEFAULT_WORKOUT)), false);
+});
+
+test("music opens a public YouTube playlist instead of local audio", () => {
+  const app = loadApp();
+
+  assert.match(app.MUSIC_PLAYLIST_URL, /^https:\/\/www\.youtube\.com\/playlist\?list=/);
 });

@@ -68,3 +68,13 @@ Alias acceptes pour lisibilite :
 - Ne pas utiliser `innerHTML` avec le contenu de seance.
 - Bornes de duree : 1 a 7200 secondes.
 - Maximum LOT 1 : 120 etapes.
+
+## Contraintes UI LOT 2
+
+- Sur desktop et fenetre moyenne, l'ecran principal doit tenir dans le premier viewport.
+- Le plan complet doit afficher les 35 actions de la seance exemple sans ascenseur interne.
+- Les tours/blocs sont rendus ligne par ligne.
+- Chaque action et chaque pause du plan est cliquable.
+- Les annexes (`JSON de seance`, `URL partageable`, `Exemple`) restent sous l'ecran principal.
+- Le theme par defaut est `system`; `light` et `dark` sont disponibles.
+- Le bouton musique ouvre une playlist YouTube publique dans un nouvel onglet.
