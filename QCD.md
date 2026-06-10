@@ -56,24 +56,40 @@ Qualite minimale :
 - Deplacer les informations annexes sous l'ecran principal.
 - Remplacer la musique locale par une playlist YouTube publique.
 
+## LOT 3 - Controle global, videos et journal reel - SHIPPED (2026-06-10)
+
+Delai : cette session.
+
+Qualite minimale :
+
+- Corriger le chevauchement entre la note courante et les annexes.
+- Afficher en haut un controle global `Play`, `Pause`, `Stop`.
+- Afficher un chrono global de la seance du jour, persistant en localStorage.
+- Reduire `A ton rythme` au niveau d'un texte de conseil, pas d'un timer geant.
+- Afficher une video YouTube integree pour chaque etape non-pause du programme par defaut.
+- Renommer les annexes en `Programme de seance` et `Programme partageable`.
+- Ajouter un JSON reel `Seance du DATE`, mis a jour en temps reel et copiable par clic.
+
 ## Decisions
 
 - Transport URL : parametre `p` contenant le JSON encode en Base64URL.
 - Schema versionne : `v: 1`.
 - Types d'etapes : `work`, `rest`, `timed`.
+- Videos d'etapes : alias `u`, `video` ou `youtube`, normalises en `youtube-nocookie.com/embed`.
 - `rest` demarre automatiquement.
 - `timed` demarre automatiquement aussi, car l'utilisateur demande que l'app lance la seance.
 - Musique : ouverture d'une playlist YouTube publique apres clic utilisateur.
+- Journal reel : JSON local uniquement, copie presse-papier par clic.
 - Resume : Markdown dans un `textarea`, avec bouton copier.
 - Deploiement : GitHub Actions Pages, car le build legacy GitHub Pages echouait instantanement sans log exploitable. L'app reste statique, sans build applicatif.
 
 ## Backlog
 
-- LOT 3 : bibliotheque de templates de seances.
-- LOT 4 : import/export fichier JSON.
-- LOT 5 : historique localStorage.
-- LOT 6 : partage raccourci avec compression.
-- LOT 7 : PWA/offline.
+- LOT 4 : bibliotheque de templates de seances.
+- LOT 5 : import/export fichier JSON.
+- LOT 6 : historique localStorage avance.
+- LOT 7 : partage raccourci avec compression.
+- LOT 8 : PWA/offline.
 
 ## Derives evitees
 

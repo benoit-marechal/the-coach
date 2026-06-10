@@ -61,6 +61,7 @@ Alias acceptes pour lisibilite :
 - `detail` ou `target` pour `d`
 - `cue` pour `c`
 - `seconds` pour `s`
+- `video` ou `youtube` ou `u` pour l'URL YouTube d'une etape
 
 ## Securite UI
 
@@ -78,3 +79,15 @@ Alias acceptes pour lisibilite :
 - Les annexes (`JSON de seance`, `URL partageable`, `Exemple`) restent sous l'ecran principal.
 - Le theme par defaut est `system`; `light` et `dark` sont disponibles.
 - Le bouton musique ouvre une playlist YouTube publique dans un nouvel onglet.
+
+## Contraintes UI LOT 3
+
+- Les annexes ne doivent jamais chevaucher la zone de note courante.
+- Le controle global de seance affiche `Play`, `Pause`, `Stop` et un chrono global visible.
+- Le chrono global est local a la machine, persiste par date dans `localStorage`, et reste 100 % client-side.
+- `A ton rythme` est un texte compact, pas un timer geant.
+- Les videos d'etapes sont affichees dans un iframe `youtube-nocookie.com`.
+- Les pauses peuvent ne pas avoir de video.
+- `Programme de seance` designe le JSON editable.
+- `Programme partageable` designe l'URL encodee.
+- `Seance du DATE` designe le JSON reel date, commente et copiable par clic.

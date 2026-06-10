@@ -46,6 +46,18 @@
           </div>
         </header>
 
+        <section class="session-bar" aria-label="Controle de la seance du jour">
+          <div class="session-clock">
+            <p id="sessionStatus" class="eyebrow">Seance du jour</p>
+            <div id="globalTimer" class="global-timer">00:00</div>
+          </div>
+          <div class="session-actions" aria-label="Play pause stop">
+            <button id="playSession" class="session-command primary" type="button">Play</button>
+            <button id="pauseSession" class="session-command" type="button">Pause</button>
+            <button id="stopSession" class="session-command" type="button">Stop</button>
+          </div>
+        </section>
+
         <p id="error" class="error" hidden></p>
 
         <div class="progress-shell" aria-hidden="true">
@@ -63,6 +75,7 @@
             <h2 id="title">Chargement</h2>
             <p id="detail" class="detail"></p>
             <div id="timer" class="timer">00:00</div>
+            <p id="tempo" class="tempo" hidden>A ton rythme</p>
             <p id="cue" class="cue"></p>
 
             <section class="controls" aria-label="Actions">
@@ -93,6 +106,27 @@
             </div>
             <div id="planList" class="plan-groups"></div>
           </section>
+
+          <section class="video-panel" aria-label="Video du mouvement">
+            <div class="section-head">
+              <div>
+                <p class="eyebrow">Video</p>
+                <h2 id="videoTitle">Mouvement</h2>
+              </div>
+            </div>
+            <div id="videoShell" class="video-shell">
+              <iframe
+                id="videoFrame"
+                class="video-frame"
+                title="Video du mouvement"
+                loading="lazy"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen
+                hidden
+              ></iframe>
+              <p id="videoFallback" class="video-fallback">Pas de video pour cette pause.</p>
+            </div>
+          </section>
         </div>
       </section>
 
@@ -107,7 +141,7 @@
       <section class="annexes" aria-label="Informations annexes">
         <section class="panel">
           <div class="section-head">
-            <h2>JSON de seance</h2>
+            <h2>Programme de séance</h2>
             <button id="loadJson" type="button">Charger</button>
           </div>
           <textarea id="jsonInput" class="mono-area" rows="12"></textarea>
@@ -115,10 +149,18 @@
 
         <section class="panel">
           <div class="section-head">
-            <h2>URL partageable</h2>
+            <h2>Programme partageable</h2>
             <button id="copyShareUrl" type="button">Copier</button>
           </div>
           <input id="shareUrl" readonly>
+        </section>
+
+        <section class="panel live-panel">
+          <div class="section-head">
+            <h2 id="liveSessionTitle">Séance du jour</h2>
+            <p id="copyNotice" class="copy-notice" role="status" aria-live="polite"></p>
+          </div>
+          <textarea id="liveSessionJson" class="mono-area copy-area" rows="12" readonly title="Cliquer pour copier"></textarea>
         </section>
 
         <section class="panel">

@@ -138,20 +138,21 @@ p {
 .page {
   width: min(100%, 1680px);
   margin: 0 auto;
-  padding: 12px;
+  padding: 8px 12px;
 }
 
 .coach-screen {
   display: grid;
-  grid-template-rows: auto auto 1fr;
-  gap: 10px;
-  min-height: calc(100dvh - 24px);
-  max-height: calc(100dvh - 24px);
+  grid-template-rows: auto auto auto auto 1fr;
+  gap: 8px;
+  min-height: calc(100dvh - 16px);
 }
 
 .app-header,
+.session-bar,
 .current,
 .plan-panel,
+.video-panel,
 .panel,
 .summary {
   border: 1px solid var(--line);
@@ -166,7 +167,7 @@ p {
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 12px;
   align-items: start;
-  padding: 12px 14px;
+  padding: 8px 12px;
 }
 
 .eyebrow {
@@ -179,7 +180,7 @@ p {
 
 .brand h1 {
   margin-top: 2px;
-  font-size: clamp(1.6rem, 4vw, 3.2rem);
+  font-size: clamp(1.45rem, 3.4vw, 2.7rem);
   font-weight: 900;
   line-height: 0.95;
 }
@@ -187,7 +188,7 @@ p {
 .subtitle {
   margin-top: 4px;
   color: var(--muted);
-  font-size: 0.9rem;
+  font-size: 0.82rem;
 }
 
 .header-actions {
@@ -206,6 +207,41 @@ p {
 
 .music-link {
   border-color: color-mix(in srgb, var(--accent) 60%, var(--line));
+  font-weight: 900;
+}
+
+.session-bar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  padding: 6px 10px;
+}
+
+.session-clock {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  min-width: 0;
+}
+
+.global-timer {
+  color: var(--text);
+  font-size: clamp(1.35rem, 2.7vw, 1.9rem);
+  font-variant-numeric: tabular-nums;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.session-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(74px, 1fr));
+  gap: 7px;
+}
+
+.session-command {
+  min-height: 38px;
+  font-size: 1rem;
   font-weight: 900;
 }
 
@@ -233,14 +269,13 @@ p {
 
 .main-grid {
   display: grid;
-  grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+  grid-template-columns: minmax(250px, 310px) minmax(430px, 1fr) minmax(240px, 300px);
   gap: 12px;
   min-height: 0;
 }
 
 .current {
   display: grid;
-  grid-template-rows: auto auto auto auto auto auto auto;
   gap: 8px;
   min-height: 0;
   padding: 12px;
@@ -287,6 +322,13 @@ p {
   font-variant-numeric: tabular-nums;
   font-weight: 900;
   line-height: 0.9;
+}
+
+.tempo {
+  color: var(--muted);
+  font-size: 0.95rem;
+  font-weight: 900;
+  line-height: 1.25;
 }
 
 .cue {
@@ -384,7 +426,7 @@ p {
 
 .plan-actions {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(104px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(88px, 1fr));
   gap: 3px;
 }
 
@@ -431,14 +473,14 @@ p {
 }
 
 .plan-step-title {
-  font-size: 0.68rem;
+  font-size: 0.64rem;
   font-weight: 900;
   line-height: 1.05;
 }
 
 .plan-step-meta {
   color: var(--muted);
-  font-size: 0.58rem;
+  font-size: 0.55rem;
   font-weight: 700;
   line-height: 1.05;
 }
@@ -461,6 +503,42 @@ p {
   border-style: dashed;
 }
 
+.video-panel {
+  min-height: 0;
+  padding: 8px;
+}
+
+.video-shell {
+  display: grid;
+  min-height: 150px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--panel-strong) 58%, transparent);
+  aspect-ratio: 16 / 9;
+}
+
+.video-frame,
+.video-fallback {
+  grid-area: 1 / 1;
+}
+
+.video-frame {
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.video-fallback {
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 800;
+  padding: 12px;
+  text-align: center;
+}
+
 .annex,
 .annexes {
   margin-top: 18px;
@@ -468,7 +546,7 @@ p {
 
 .annexes {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 12px;
 }
 
@@ -483,6 +561,17 @@ p {
   line-height: 1.55;
 }
 
+.copy-area {
+  cursor: pointer;
+}
+
+.copy-notice {
+  min-height: 1rem;
+  color: var(--accent);
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
 .is-resting {
   --accent: var(--rest);
   --accent-strong: #b45309;
@@ -493,11 +582,7 @@ p {
   --accent-strong: #15803d;
 }
 
-@media (max-width: 860px) {
-  .coach-screen {
-    max-height: none;
-  }
-
+@media (max-width: 960px) {
   .main-grid {
     grid-template-columns: 1fr;
   }
@@ -522,6 +607,7 @@ p {
   }
 
   .app-header,
+  .session-bar,
   .main-grid,
   .current,
   .plan-panel {
@@ -529,10 +615,16 @@ p {
   }
 
   .app-header,
+  .session-bar,
   .controls,
   .quick-row,
   .quick-rests {
     grid-template-columns: 1fr;
+  }
+
+  .session-clock,
+  .session-actions {
+    width: 100%;
   }
 
   .header-actions {

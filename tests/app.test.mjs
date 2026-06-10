@@ -61,6 +61,23 @@ test("normalizes compact and readable workout schemas", () => {
   assert.equal(workout.steps[2].kind, "timed");
 });
 
+test("normalizes youtube video URLs and preserves step video metadata", () => {
+  const app = loadApp();
+  const workout = app.normalizeWorkout({
+    title: "Videos",
+    steps: [
+      { k: "work", b: "A", t: "Swing", video: "https://www.youtube.com/watch?v=uMqcv_O7ppI" },
+      { k: "timed", b: "B", t: "Respiration", youtube: "https://youtu.be/QUFRhuEvp0g" },
+      { k: "rest", b: "B", t: "Pause", s: 60 },
+    ],
+  });
+
+  assert.equal(workout.steps[0].video, "https://www.youtube-nocookie.com/embed/uMqcv_O7ppI");
+  assert.equal(workout.steps[1].video, "https://www.youtube-nocookie.com/embed/QUFRhuEvp0g");
+  assert.equal(workout.steps[2].video, "");
+  assert.equal(app.youtubeEmbedUrl("https://www.youtube.com/embed/aNDUbH_Uv4g"), "https://www.youtube-nocookie.com/embed/aNDUbH_Uv4g");
+});
+
 test("rejects unsupported versions and invalid step entries explicitly", () => {
   const app = loadApp();
 
@@ -160,6 +177,39 @@ test("groups the full plan by visible workout rounds", () => {
   );
 });
 
+test("default workout gives every non-rest action an embeddable video", () => {
+  const app = loadApp();
+  const workout = app.normalizeWorkout(app.DEFAULT_WORKOUT);
+  const actions = workout.steps.filter((step) => step.kind !== "rest");
+
+  assert.ok(actions.length > 0);
+  assert.equal(actions.every((step) => /^https:\/\/www\.youtube-nocookie\.com\/embed\/[A-Za-z0-9_-]+$/.test(step.video)), true);
+});
+
+test("session clock accumulates elapsed seconds across play, pause, and stop", () => {
+  const app = loadApp();
+  const clock = app.createSessionClock({ date: "2026-06-10", now: 1000 });
+
+  const running = app.playSessionClock(clock, 1000);
+  assert.equal(app.elapsedSessionSeconds(running, 3500), 2);
+
+  const paused = app.pauseSessionClock(running, 4000);
+  assert.equal(paused.running, false);
+  assert.equal(app.elapsedSessionSeconds(paused, 9000), 3);
+
+  const resumed = app.playSessionClock(paused, 9000);
+  const stopped = app.stopSessionClock(resumed, 12000);
+  assert.equal(stopped.running, false);
+  assert.equal(stopped.stopped, true);
+  assert.equal(app.elapsedSessionSeconds(stopped, 20000), 6);
+});
+
+test("formats the live session date label in French", () => {
+  const app = loadApp();
+
+  assert.equal(app.formatSessionDateLabel("2026-05-24T12:00:00.000Z"), "24 mai 2026");
+});
+
 test("stores notes per step without losing navigation state", () => {
   const app = loadApp();
   const state = app.createInitialState(
@@ -242,6 +292,34 @@ test("generates a markdown summary for AI handoff", () => {
   assert.match(markdown, /Eviter les pompes\./);
   assert.match(markdown, /Goblet squat/);
   assert.match(markdown, /OK, RPE 8/);
+});
+
+test("builds a dated live session JSON for AI storage", () => {
+  const app = loadApp();
+  const workout = app.normalizeWorkout({
+    title: "Kettlebell",
+    athleteNote: "Eviter les pompes.",
+    steps: [
+      { id: "squat", k: "work", b: "Force", t: "Goblet squat", d: "10 reps", video: "https://www.youtube.com/watch?v=aNDUbH_Uv4g" },
+      { id: "pause", k: "rest", b: "Force", t: "Pause", s: 60 },
+    ],
+  });
+  const state = {
+    ...app.createInitialState(workout),
+    notes: {
+      squat: "RPE 8",
+    },
+  };
+  const clock = app.pauseSessionClock(app.playSessionClock(app.createSessionClock({ date: "2026-05-24", now: 1000 }), 1000), 62000);
+
+  const journal = app.buildLiveSessionJson(state, clock, "2026-05-24T12:00:00.000Z");
+
+  assert.equal(journal.title, "Séance du 24 mai 2026");
+  assert.equal(journal.elapsedSeconds, 61);
+  assert.equal(journal.current.index, 1);
+  assert.equal(journal.steps[0].note, "RPE 8");
+  assert.equal(journal.steps[0].video, "https://www.youtube-nocookie.com/embed/aNDUbH_Uv4g");
+  assert.equal(journal.steps[1].note, "");
 });
 
 test("default workout avoids pushups", () => {

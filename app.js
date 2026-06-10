@@ -3,6 +3,15 @@
   const MIN_SECONDS = 1;
   const MAX_SECONDS = 7200;
   const MUSIC_PLAYLIST_URL = "https://www.youtube.com/playlist?list=PLRPR8uJQx5tFv7_Uez_8W1tK2jtoC9A3q";
+  const VIDEO_URLS = {
+    breathing: "https://www.youtube.com/watch?v=QUFRhuEvp0g",
+    deadlift: "https://www.youtube.com/watch?v=LDfnyt0Rmaw",
+    row: "https://www.youtube.com/watch?v=l5qelXL5nfs",
+    squat: "https://www.youtube.com/watch?v=aNDUbH_Uv4g",
+    stretch: "https://www.youtube.com/watch?v=UIRTPXj1Q1U",
+    suitcase: "https://www.youtube.com/watch?v=tNHdx7pmrGI",
+    swing: "https://www.youtube.com/watch?v=uMqcv_O7ppI",
+  };
 
   const DEFAULT_WORKOUT = {
     v: 1,
@@ -12,41 +21,41 @@
     quick: [60, 90],
     add: 30,
     steps: [
-      { k: "work", b: "Swings", t: "Swings 2 mains", d: "16 reps", c: "Hanches explosives, dos neutre." },
-      { k: "work", b: "Swings", t: "Swings 2 mains", d: "16 reps", c: "Reste explosif, stop si le bas du dos prend." },
-      { k: "work", b: "Swings", t: "Swings 2 mains", d: "16 reps", c: "Garde 2 reps en reserve." },
+      { k: "work", b: "Swings", t: "Swings 2 mains", d: "16 reps", c: "Hanches explosives, dos neutre.", u: VIDEO_URLS.swing },
+      { k: "work", b: "Swings", t: "Swings 2 mains", d: "16 reps", c: "Reste explosif, stop si le bas du dos prend.", u: VIDEO_URLS.swing },
+      { k: "work", b: "Swings", t: "Swings 2 mains", d: "16 reps", c: "Garde 2 reps en reserve.", u: VIDEO_URLS.swing },
       { k: "rest", b: "Swings", t: "Pause", s: 90 },
-      { k: "work", b: "Swings", t: "Swings 2 mains", d: "12 a 16 reps", c: "Garde 2 reps en reserve." },
+      { k: "work", b: "Swings", t: "Swings 2 mains", d: "12 a 16 reps", c: "Garde 2 reps en reserve.", u: VIDEO_URLS.swing },
       { k: "rest", b: "Transition", t: "Pause avant force", s: 120 },
-      { k: "work", b: "Force 1/3", t: "Goblet squat", d: "8 a 10 reps" },
+      { k: "work", b: "Force 1/3", t: "Goblet squat", d: "8 a 10 reps", u: VIDEO_URLS.squat },
       { k: "rest", b: "Force 1/3", t: "Pause", s: 60 },
-      { k: "work", b: "Force 1/3", t: "Row 1 bras", d: "8 gauche + 8 droit" },
+      { k: "work", b: "Force 1/3", t: "Row 1 bras", d: "8 gauche + 8 droit", u: VIDEO_URLS.row },
       { k: "rest", b: "Force 1/3", t: "Pause", s: 60 },
-      { k: "work", b: "Force 1/3", t: "Kettlebell deadlift", d: "8 a 10 reps" },
+      { k: "work", b: "Force 1/3", t: "Kettlebell deadlift", d: "8 a 10 reps", u: VIDEO_URLS.deadlift },
       { k: "rest", b: "Force 1/3", t: "Pause avant tour 2", s: 90 },
-      { k: "work", b: "Force 2/3", t: "Goblet squat", d: "8 a 10 reps" },
+      { k: "work", b: "Force 2/3", t: "Goblet squat", d: "8 a 10 reps", u: VIDEO_URLS.squat },
       { k: "rest", b: "Force 2/3", t: "Pause", s: 60 },
-      { k: "work", b: "Force 2/3", t: "Row 1 bras", d: "8 gauche + 8 droit" },
+      { k: "work", b: "Force 2/3", t: "Row 1 bras", d: "8 gauche + 8 droit", u: VIDEO_URLS.row },
       { k: "rest", b: "Force 2/3", t: "Pause", s: 60 },
-      { k: "work", b: "Force 2/3", t: "Kettlebell deadlift", d: "8 a 10 reps" },
+      { k: "work", b: "Force 2/3", t: "Kettlebell deadlift", d: "8 a 10 reps", u: VIDEO_URLS.deadlift },
       { k: "rest", b: "Force 2/3", t: "Pause avant tour 3", s: 90 },
-      { k: "work", b: "Force 3/3", t: "Goblet squat", d: "8 a 10 reps" },
+      { k: "work", b: "Force 3/3", t: "Goblet squat", d: "8 a 10 reps", u: VIDEO_URLS.squat },
       { k: "rest", b: "Force 3/3", t: "Pause", s: 60 },
-      { k: "work", b: "Force 3/3", t: "Row 1 bras", d: "8 gauche + 8 droit" },
+      { k: "work", b: "Force 3/3", t: "Row 1 bras", d: "8 gauche + 8 droit", u: VIDEO_URLS.row },
       { k: "rest", b: "Force 3/3", t: "Pause", s: 60 },
-      { k: "work", b: "Force 3/3", t: "Kettlebell deadlift", d: "8 a 10 reps" },
+      { k: "work", b: "Force 3/3", t: "Kettlebell deadlift", d: "8 a 10 reps", u: VIDEO_URLS.deadlift },
       { k: "rest", b: "Transition", t: "Pause avant carries", s: 120 },
-      { k: "work", b: "Carry 1/2", t: "Suitcase hold/carry droite", d: "45 s", s: 45 },
+      { k: "work", b: "Carry 1/2", t: "Suitcase hold/carry droite", d: "45 s", s: 45, u: VIDEO_URLS.suitcase },
       { k: "rest", b: "Carry 1/2", t: "Pause", s: 30 },
-      { k: "work", b: "Carry 1/2", t: "Suitcase hold/carry gauche", d: "45 s", s: 45 },
+      { k: "work", b: "Carry 1/2", t: "Suitcase hold/carry gauche", d: "45 s", s: 45, u: VIDEO_URLS.suitcase },
       { k: "rest", b: "Carry 1/2", t: "Pause avant tour 2", s: 60 },
-      { k: "work", b: "Carry 2/2", t: "Suitcase hold/carry droite", d: "45 s", s: 45 },
+      { k: "work", b: "Carry 2/2", t: "Suitcase hold/carry droite", d: "45 s", s: 45, u: VIDEO_URLS.suitcase },
       { k: "rest", b: "Carry 2/2", t: "Pause", s: 30 },
-      { k: "work", b: "Carry 2/2", t: "Suitcase hold/carry gauche", d: "45 s", s: 45 },
+      { k: "work", b: "Carry 2/2", t: "Suitcase hold/carry gauche", d: "45 s", s: 45, u: VIDEO_URLS.suitcase },
       { k: "rest", b: "Retour au calme", t: "Pause avant retour au calme", s: 60 },
-      { k: "timed", b: "Retour au calme", t: "Respiration lente", d: "2 min", s: 120 },
-      { k: "timed", b: "Retour au calme", t: "Etirement hanches/ischios droite", d: "30 s", s: 30 },
-      { k: "timed", b: "Retour au calme", t: "Etirement hanches/ischios gauche", d: "30 s", s: 30 },
+      { k: "timed", b: "Retour au calme", t: "Respiration lente", d: "2 min", s: 120, u: VIDEO_URLS.breathing },
+      { k: "timed", b: "Retour au calme", t: "Etirement hanches/ischios droite", d: "30 s", s: 30, u: VIDEO_URLS.stretch },
+      { k: "timed", b: "Retour au calme", t: "Etirement hanches/ischios gauche", d: "30 s", s: 30, u: VIDEO_URLS.stretch },
     ],
   };
 
@@ -159,6 +168,21 @@
     return Math.min(MAX_SECONDS, Math.max(MIN_SECONDS, Math.round(numeric)));
   }
 
+  function youtubeVideoId(value) {
+    const raw = stringValue(value, "");
+    if (!raw) return "";
+    const direct = raw.match(/youtube(?:-nocookie)?\.com\/embed\/([A-Za-z0-9_-]{6,})/);
+    const watch = raw.match(/[?&]v=([A-Za-z0-9_-]{6,})/);
+    const short = raw.match(/youtu\.be\/([A-Za-z0-9_-]{6,})/);
+    const shorts = raw.match(/youtube\.com\/shorts\/([A-Za-z0-9_-]{6,})/);
+    return (direct || watch || short || shorts || [])[1] || "";
+  }
+
+  function youtubeEmbedUrl(value) {
+    const id = youtubeVideoId(value);
+    return id ? `https://www.youtube-nocookie.com/embed/${id}` : "";
+  }
+
   function normalizeStep(rawStep, index) {
     if (!rawStep || typeof rawStep !== "object" || Array.isArray(rawStep)) {
       throw new Error(`Etape invalide a l'index ${index + 1}.`);
@@ -176,6 +200,7 @@
       title,
       detail: stringValue(rawStep.d || rawStep.detail || rawStep.target, ""),
       cue: stringValue(rawStep.c || rawStep.cue, ""),
+      video: youtubeEmbedUrl(rawStep.u || rawStep.video || rawStep.youtube),
     };
 
     if (kind === "rest" || kind === "timed") {
@@ -374,6 +399,79 @@
     return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
   }
 
+  function dateKey(value) {
+    const date = value instanceof Date ? value : new Date(value || Date.now());
+    if (Number.isNaN(date.getTime())) return dateKey(Date.now());
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${date.getFullYear()}-${month}-${day}`;
+  }
+
+  function formatSessionDateLabel(value) {
+    const date = value instanceof Date ? value : new Date(value || Date.now());
+    const safeDate = Number.isNaN(date.getTime()) ? new Date() : date;
+    return new Intl.DateTimeFormat("fr-FR", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    }).format(safeDate);
+  }
+
+  function createSessionClock(options) {
+    const settings = options || {};
+    return {
+      date: settings.date || dateKey(settings.now || Date.now()),
+      startedAt: settings.startedAt || "",
+      runningSince: Number(settings.runningSince) || 0,
+      elapsedSeconds: Math.max(0, Math.round(Number(settings.elapsedSeconds) || 0)),
+      running: Boolean(settings.running),
+      stopped: Boolean(settings.stopped),
+      stoppedAt: settings.stoppedAt || "",
+    };
+  }
+
+  function elapsedSessionSeconds(clock, now) {
+    const session = createSessionClock(clock);
+    if (!session.running || !session.runningSince) return session.elapsedSeconds;
+    const delta = Math.max(0, Math.floor(((Number(now) || Date.now()) - session.runningSince) / 1000));
+    return session.elapsedSeconds + delta;
+  }
+
+  function playSessionClock(clock, now) {
+    const at = Number(now) || Date.now();
+    const session = createSessionClock(clock);
+    if (session.running) return session;
+    return {
+      ...session,
+      startedAt: session.startedAt || new Date(at).toISOString(),
+      running: true,
+      runningSince: at,
+      stopped: false,
+      stoppedAt: "",
+    };
+  }
+
+  function pauseSessionClock(clock, now) {
+    const at = Number(now) || Date.now();
+    const session = createSessionClock(clock);
+    return {
+      ...session,
+      elapsedSeconds: elapsedSessionSeconds(session, at),
+      running: false,
+      runningSince: 0,
+    };
+  }
+
+  function stopSessionClock(clock, now) {
+    const at = Number(now) || Date.now();
+    const paused = pauseSessionClock(clock, at);
+    return {
+      ...paused,
+      stopped: true,
+      stoppedAt: new Date(at).toISOString(),
+    };
+  }
+
   function stepLabel(step) {
     if (!step) return "Fin";
     if (step.kind === "rest") return "Pause";
@@ -413,6 +511,61 @@
     return lines.join("\n").trim() + "\n";
   }
 
+  function buildLiveSessionJson(state, clock, now) {
+    const label = formatSessionDateLabel(now || Date.now());
+    const sessionClock = createSessionClock(clock);
+    const step = currentStep(state);
+    const nowMs = now instanceof Date ? now.getTime() : typeof now === "number" ? now : Date.parse(now) || Date.now();
+    const elapsedSeconds = elapsedSessionSeconds(sessionClock, nowMs);
+    return {
+      v: 1,
+      title: `Séance du ${label}`,
+      dateLabel: label,
+      workoutTitle: state.workout.title,
+      athleteNote: state.workout.athleteNote,
+      startedAt: state.startedAt,
+      finishedAt: state.finishedAt,
+      elapsedSeconds,
+      elapsed: formatTime(elapsedSeconds),
+      session: {
+        date: sessionClock.date,
+        startedAt: sessionClock.startedAt,
+        stoppedAt: sessionClock.stoppedAt,
+        running: sessionClock.running,
+        stopped: sessionClock.stopped,
+      },
+      current: step ? {
+        index: state.currentIndex + 1,
+        id: step.id,
+        title: step.title,
+        block: step.block,
+        type: stepLabel(step),
+        remainingSeconds: state.remainingSeconds,
+      } : {
+        index: state.workout.steps.length,
+        id: "",
+        title: "Fin",
+        block: "Seance terminee",
+        type: "Fin",
+        remainingSeconds: 0,
+      },
+      steps: state.workout.steps.map((item, index) => ({
+        index: index + 1,
+        id: item.id,
+        type: stepLabel(item),
+        kind: item.kind,
+        block: item.block,
+        title: item.title,
+        target: item.detail || (item.seconds ? formatTime(item.seconds) : ""),
+        seconds: item.seconds || 0,
+        video: item.video || "",
+        note: String(state.notes[item.id] || ""),
+        current: index === state.currentIndex && !state.done,
+        done: state.done || index < state.currentIndex,
+      })),
+    };
+  }
+
   function parseWorkoutFromUrl(search) {
     const params = new URLSearchParams(search || "");
     const payload = params.get("p") || params.get("workout");
@@ -433,13 +586,17 @@
     DEFAULT_WORKOUT,
     MUSIC_PLAYLIST_URL,
     addTime,
+    buildLiveSessionJson,
     buildMarkdownSummary,
     completeCurrentStep,
+    createSessionClock,
     createInitialState,
     currentStep,
     decodeWorkout,
     encodeWorkout,
+    elapsedSessionSeconds,
     forceRest,
+    formatSessionDateLabel,
     formatTime,
     goToStep,
     goToNext,
@@ -447,11 +604,15 @@
     groupStepsByBlock,
     normalizeWorkout,
     parseWorkoutFromUrl,
+    pauseSessionClock,
+    playSessionClock,
     progressPercent,
     stepLabel,
+    stopSessionClock,
     tick,
     toggleTimer,
     updateCurrentNote,
+    youtubeEmbedUrl,
   };
 
   globalThis.TheCoach = api;
@@ -473,31 +634,46 @@
     error: $("#error"),
     exampleJson: $("#exampleJson"),
     forceRests: $("#forceRests"),
+    globalTimer: $("#globalTimer"),
     jsonInput: $("#jsonInput"),
     loadJson: $("#loadJson"),
+    liveSessionJson: $("#liveSessionJson"),
+    liveSessionTitle: $("#liveSessionTitle"),
     mainAction: $("#mainAction"),
     markdown: $("#markdown"),
     music: $("#music"),
     next: $("#next"),
     note: $("#note"),
+    copyNotice: $("#copyNotice"),
+    pauseSession: $("#pauseSession"),
     planList: $("#planList"),
+    playSession: $("#playSession"),
     previous: $("#previous"),
     progress: $("#progress"),
     reset: $("#reset"),
     running: $("#running"),
     shareUrl: $("#shareUrl"),
+    sessionStatus: $("#sessionStatus"),
     stepCount: $("#stepCount"),
     stepType: $("#stepType"),
+    stopSession: $("#stopSession"),
+    tempo: $("#tempo"),
     summaryPanel: $("#summaryPanel"),
     themeSelect: $("#themeSelect"),
     timer: $("#timer"),
     title: $("#title"),
+    videoFallback: $("#videoFallback"),
+    videoFrame: $("#videoFrame"),
+    videoTitle: $("#videoTitle"),
     workoutTitle: $("#workoutTitle"),
   };
 
   const THEME_STORAGE_KEY = "the-coach-theme";
+  const SESSION_CLOCK_STORAGE_KEY = "the-coach-session-clock-v1";
   let state = createInitialState(parseWorkoutFromUrl(window.location.search).workout);
   let previousIndex = state.currentIndex;
+  let sessionClock = loadSessionClock();
+  let copyNoticeTimer = 0;
 
   function setText(element, text) {
     element.textContent = text == null ? "" : String(text);
@@ -513,6 +689,83 @@
     node.textContent = text;
     parent.appendChild(node);
     return node;
+  }
+
+  function loadSessionClock() {
+    const today = dateKey(Date.now());
+    try {
+      const raw = localStorage.getItem(SESSION_CLOCK_STORAGE_KEY);
+      if (raw) {
+        const saved = createSessionClock(JSON.parse(raw));
+        if (saved.date === today) return saved;
+      }
+    } catch (error) {
+      localStorage.removeItem(SESSION_CLOCK_STORAGE_KEY);
+    }
+    return createSessionClock({ date: today, now: Date.now() });
+  }
+
+  function saveSessionClock() {
+    localStorage.setItem(SESSION_CLOCK_STORAGE_KEY, JSON.stringify(sessionClock));
+  }
+
+  function setSessionClock(nextClock) {
+    sessionClock = createSessionClock(nextClock);
+    saveSessionClock();
+    render();
+  }
+
+  function renderSessionClock() {
+    const elapsed = elapsedSessionSeconds(sessionClock, Date.now());
+    setText(elements.globalTimer, formatTime(elapsed));
+    setText(elements.sessionStatus, sessionClock.stopped ? "Seance stoppee" : sessionClock.running ? "Seance en cours" : "Seance en pause");
+    elements.playSession.disabled = sessionClock.running;
+    elements.pauseSession.disabled = !sessionClock.running;
+    elements.stopSession.disabled = sessionClock.stopped && !sessionClock.running;
+  }
+
+  function renderVideo(step) {
+    const video = step && step.video;
+    setText(elements.videoTitle, step ? step.title : "Mouvement");
+    if (!video) {
+      elements.videoFrame.hidden = true;
+      elements.videoFrame.removeAttribute("src");
+      elements.videoFrame.removeAttribute("srcdoc");
+      elements.videoFrame.removeAttribute("data-video");
+      elements.videoFallback.hidden = false;
+      setText(elements.videoFallback, step && step.kind === "rest" ? "Pas de video pour cette pause." : "Aucune video renseignee pour cette etape.");
+      return;
+    }
+    const videoId = youtubeVideoId(video);
+    const thumbnail = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+    const srcdoc = `<style>*{box-sizing:border-box}body{margin:0;background:#111;color:#fff;font-family:system-ui,sans-serif}a{display:grid;place-items:center;min-height:100vh;color:#fff;text-decoration:none;position:relative;overflow:hidden}img{width:100%;height:100%;object-fit:cover;filter:brightness(.72)}span{position:absolute;display:grid;place-items:center;width:76px;height:54px;border-radius:8px;background:#dc2626;font-weight:900;box-shadow:0 12px 40px rgba(0,0,0,.45)}</style><a href="${video}?autoplay=1"><img src="${thumbnail}" alt=""><span>Play</span></a>`;
+    elements.videoFallback.hidden = true;
+    elements.videoFrame.hidden = false;
+    elements.videoFrame.title = `Video - ${step.title}`;
+    if (elements.videoFrame.getAttribute("data-video") !== video) {
+      elements.videoFrame.removeAttribute("src");
+      elements.videoFrame.setAttribute("srcdoc", srcdoc);
+      elements.videoFrame.setAttribute("data-video", video);
+    }
+  }
+
+  function renderLiveSessionJson() {
+    const now = new Date();
+    const liveSession = buildLiveSessionJson(state, sessionClock, now);
+    setText(elements.liveSessionTitle, liveSession.title);
+    elements.liveSessionJson.value = JSON.stringify(liveSession, null, 2);
+  }
+
+  async function copyLiveSessionJson() {
+    elements.liveSessionJson.select();
+    try {
+      await navigator.clipboard.writeText(elements.liveSessionJson.value);
+    } catch (error) {
+      document.execCommand("copy");
+    }
+    setText(elements.copyNotice, "Copié");
+    clearTimeout(copyNoticeTimer);
+    copyNoticeTimer = setTimeout(() => setText(elements.copyNotice, ""), 1800);
   }
 
   function renderForceRestButtons() {
@@ -570,6 +823,8 @@
     const step = currentStep(state);
     document.body.classList.toggle("is-resting", step && step.kind === "rest");
     document.body.classList.toggle("is-done", state.done);
+    renderSessionClock();
+    renderVideo(step);
     setText(elements.workoutTitle, state.workout.title);
     setText(elements.athleteNote, state.workout.athleteNote || "Seance chargee depuis l'URL ou l'exemple local.");
 
@@ -581,6 +836,8 @@
       setText(elements.title, "Resume pret");
       setText(elements.detail, "Copie le markdown pour ton agent IA.");
       setText(elements.timer, "00:00");
+      elements.timer.hidden = false;
+      elements.tempo.hidden = true;
       setText(elements.cue, "Ne rajoute pas de volume par inertie. Note le ressenti.");
       elements.progress.style.width = "100%";
       elements.mainAction.textContent = "Recommencer";
@@ -588,6 +845,7 @@
       elements.note.disabled = true;
       renderPlanList();
       renderSummary();
+      renderLiveSessionJson();
       return;
     }
 
@@ -598,7 +856,10 @@
     setText(elements.stepCount, `${state.currentIndex + 1}/${state.workout.steps.length}`);
     setText(elements.title, step.title);
     setText(elements.detail, step.detail || (step.seconds ? `${step.seconds} s` : ""));
-    setText(elements.timer, timed ? formatTime(state.remainingSeconds) : "A ton rythme");
+    elements.timer.hidden = !timed;
+    elements.tempo.hidden = timed;
+    setText(elements.timer, timed ? formatTime(state.remainingSeconds) : "");
+    setText(elements.tempo, "A ton rythme");
     setText(elements.cue, step.cue || "Note precisement ce que tu veux transmettre a ton agent IA.");
     elements.progress.style.width = `${progressPercent(state)}%`;
     elements.note.disabled = false;
@@ -614,6 +875,7 @@
 
     renderPlanList();
     renderSummary();
+    renderLiveSessionJson();
   }
 
   function setState(nextState) {
@@ -645,6 +907,7 @@
         d: step.detail,
         c: step.cue,
         s: step.seconds,
+        u: step.video,
       })),
     }, null, 2);
     elements.shareUrl.value = `${window.location.origin}${window.location.pathname}?p=${encodeWorkout(rawWorkout)}`;
@@ -699,6 +962,10 @@
   elements.note.addEventListener("input", () => setState(updateCurrentNote(state, elements.note.value)));
   elements.loadJson.addEventListener("click", loadFromText);
   elements.music.addEventListener("click", openMusicPlaylist);
+  elements.playSession.addEventListener("click", () => setSessionClock(playSessionClock(sessionClock, Date.now())));
+  elements.pauseSession.addEventListener("click", () => setSessionClock(pauseSessionClock(sessionClock, Date.now())));
+  elements.stopSession.addEventListener("click", () => setSessionClock(stopSessionClock(sessionClock, Date.now())));
+  elements.liveSessionJson.addEventListener("click", copyLiveSessionJson);
   elements.themeSelect.addEventListener("change", () => applyTheme(elements.themeSelect.value));
 
   $("#copyMarkdown").addEventListener("click", async () => {
@@ -721,7 +988,12 @@
 
   setInterval(() => {
     const next = tick(state);
-    if (next !== state) setState(next);
+    if (sessionClock.running) saveSessionClock();
+    if (next !== state) {
+      setState(next);
+    } else if (sessionClock.running) {
+      render();
+    }
   }, 1000);
 
   const parsed = parseWorkoutFromUrl(window.location.search);
