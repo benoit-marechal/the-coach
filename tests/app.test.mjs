@@ -21,6 +21,15 @@ function loadApp() {
   return sandbox.window.TheCoach;
 }
 
+function createMemoryStorage() {
+  const values = new Map();
+  return {
+    getItem: (key) => values.get(key) ?? null,
+    removeItem: (key) => values.delete(key),
+    setItem: (key, value) => values.set(key, String(value)),
+  };
+}
+
 test("encodes and decodes workout payloads for URL transport", () => {
   const app = loadApp();
   const workout = {
@@ -59,6 +68,20 @@ test("normalizes compact and readable workout schemas", () => {
   assert.equal(workout.steps[0].detail, "10 reps");
   assert.equal(workout.steps[1].seconds, 60);
   assert.equal(workout.steps[2].kind, "timed");
+});
+
+test("normalizes load, reps, and target seconds for measured work steps", () => {
+  const app = loadApp();
+  const workout = app.normalizeWorkout({
+    title: "Measured work",
+    steps: [
+      { k: "work", b: "A", t: "Goblet squat", d: "9 reps", kg: 16, reps: 9, s: 36 },
+    ],
+  });
+
+  assert.equal(workout.steps[0].weightKg, 16);
+  assert.equal(workout.steps[0].reps, 9);
+  assert.equal(workout.steps[0].seconds, 36);
 });
 
 test("normalizes youtube video URLs and preserves step video metadata", () => {
@@ -135,6 +158,26 @@ test("auto-runs rest and timed steps when entering them", () => {
   assert.equal(timed.remainingSeconds, 3);
 });
 
+test("auto-runs measured work steps that define target seconds", () => {
+  const app = loadApp();
+  const workout = app.normalizeWorkout({
+    title: "Measured timer",
+    steps: [
+      { k: "work", b: "A", t: "Swings", kg: 16, reps: 16, s: 2 },
+      { k: "rest", b: "A", t: "Pause", s: 60 },
+    ],
+  });
+  const initial = app.createInitialState(workout);
+
+  assert.equal(app.currentStep(initial).kind, "work");
+  assert.equal(initial.running, true);
+  assert.equal(initial.remainingSeconds, 2);
+
+  const next = app.tick(app.tick(initial));
+  assert.equal(app.currentStep(next).kind, "rest");
+  assert.equal(next.running, true);
+});
+
 test("can jump directly to any workout step", () => {
   const app = loadApp();
   const state = app.createInitialState(
@@ -155,12 +198,61 @@ test("can jump directly to any workout step", () => {
   assert.equal(jumped.remainingSeconds, 45);
 });
 
+test("next asks before skipping an uncounted work step", () => {
+  const app = loadApp();
+  const state = app.createInitialState(
+    app.normalizeWorkout({
+      title: "Skip",
+      steps: [
+        { k: "work", b: "A", t: "Swing", kg: 16, reps: 16, s: 32 },
+        { k: "rest", b: "A", t: "Pause", s: 60 },
+      ],
+    }),
+  );
+  let confirmMessage = "";
+
+  const blocked = app.goToNext(state, (message) => {
+    confirmMessage = message;
+    return false;
+  });
+  const skipped = app.goToNext(state, () => true);
+
+  assert.equal(confirmMessage, "Êtes-vous sûr de ne pas avoir fait cette étape ? Elle ne sera pas comptée dans la séance vraiment réalisée.");
+  assert.equal(blocked.currentIndex, 0);
+  assert.equal(app.currentStep(blocked).title, "Swing");
+  assert.equal(skipped.currentIndex, 1);
+  assert.equal(app.currentStep(skipped).title, "Pause");
+});
+
+test("next does not ask before moving past a rest step", () => {
+  const app = loadApp();
+  const state = app.goToNext(
+    app.createInitialState(
+      app.normalizeWorkout({
+        title: "Rest skip",
+        steps: [
+          { k: "work", b: "A", t: "Swing", kg: 16, reps: 16, s: 32 },
+          { k: "rest", b: "A", t: "Pause", s: 60 },
+          { k: "work", b: "A", t: "Squat", kg: 16, reps: 9, s: 36 },
+        ],
+      }),
+    ),
+    () => true,
+  );
+
+  const next = app.goToNext(state, () => {
+    throw new Error("Rest steps should not ask for skip confirmation.");
+  });
+
+  assert.equal(app.currentStep(next).title, "Squat");
+});
+
 test("groups the full plan by visible workout rounds", () => {
   const app = loadApp();
   const workout = app.normalizeWorkout(app.DEFAULT_WORKOUT);
   const groups = app.groupStepsByBlock(workout.steps);
 
-  assert.equal(workout.steps.length, 35);
+  assert.ok(workout.steps.length > 35);
   assert.equal(
     JSON.stringify(groups.map((group) => group.block)),
     JSON.stringify([
@@ -177,6 +269,62 @@ test("groups the full plan by visible workout rounds", () => {
   );
 });
 
+test("default workout puts rests between the first swing work sets", () => {
+  const app = loadApp();
+  const workout = app.normalizeWorkout(app.DEFAULT_WORKOUT);
+  const firstSixKinds = workout.steps.slice(0, 6).map((step) => step.kind);
+
+  assert.equal(JSON.stringify(firstSixKinds), JSON.stringify(["work", "rest", "work", "rest", "work", "rest"]));
+});
+
+test("ships complementary low-equipment programs", () => {
+  const app = loadApp();
+  const titles = app.DEFAULT_PROGRAMS.map((program) => program.title);
+
+  assert.ok(app.DEFAULT_PROGRAMS.length >= 4);
+  assert.ok(titles.includes("Kettlebell 16 kg"));
+  assert.ok(titles.includes("Mobilite + tronc sans materiel"));
+  assert.ok(titles.includes("Kettlebell technique courte"));
+  assert.ok(titles.includes("Gainage + carries minimal"));
+});
+
+test("default programs never expose ranged repetition targets", () => {
+  const app = loadApp();
+  const exported = app.exportProgramLibrary(app.DEFAULT_PROGRAMS);
+
+  assert.equal(/\b\d+\s*(?:a|à|-)\s*\d+\s*reps\b/i.test(exported), false);
+});
+
+test("stores the program library in localStorage when no library exists yet", () => {
+  const app = loadApp();
+  const storage = createMemoryStorage();
+
+  const library = app.loadProgramLibrary(storage);
+  const saved = JSON.parse(storage.getItem(app.PROGRAM_LIBRARY_STORAGE_KEY));
+
+  assert.ok(library.length >= 4);
+  assert.equal(saved.programs.length, library.length);
+  assert.equal(saved.programs[0].title, "Kettlebell 16 kg");
+});
+
+test("exports the local program library as reusable JSON", () => {
+  const app = loadApp();
+  const library = app.normalizeProgramLibrary([
+    {
+      id: "custom",
+      title: "Custom minimal",
+      steps: [{ k: "work", b: "A", t: "Squat", kg: 16, reps: 8, s: 32 }],
+    },
+  ]);
+
+  const exported = JSON.parse(app.exportProgramLibrary(library));
+
+  assert.equal(exported.v, 1);
+  assert.equal(exported.programs.length, 1);
+  assert.equal(exported.programs[0].id, "custom");
+  assert.equal(exported.programs[0].steps[0].title, "Squat");
+});
+
 test("default workout gives every non-rest action an embeddable video", () => {
   const app = loadApp();
   const workout = app.normalizeWorkout(app.DEFAULT_WORKOUT);
@@ -184,6 +332,24 @@ test("default workout gives every non-rest action an embeddable video", () => {
 
   assert.ok(actions.length > 0);
   assert.equal(actions.every((step) => /^https:\/\/www\.youtube-nocookie\.com\/embed\/[A-Za-z0-9_-]+$/.test(step.video)), true);
+});
+
+test("computes total lifted weight and target kilograms per minute for a workout", () => {
+  const app = loadApp();
+  const workout = app.normalizeWorkout({
+    title: "Metrics",
+    steps: [
+      { k: "work", b: "A", t: "Swing", kg: 16, reps: 16, s: 32 },
+      { k: "rest", b: "A", t: "Pause", s: 28 },
+      { k: "work", b: "A", t: "Row", kg: 16, reps: 16, s: 60 },
+    ],
+  });
+
+  const metrics = app.workoutMetrics(workout);
+
+  assert.equal(metrics.totalWeightKg, 512);
+  assert.equal(metrics.targetSeconds, 120);
+  assert.equal(metrics.kgPerMinute, 256);
 });
 
 test("session clock accumulates elapsed seconds across play, pause, and stop", () => {
@@ -223,6 +389,68 @@ test("stores notes per step without losing navigation state", () => {
 
   assert.equal(withNote.notes[app.currentStep(state).id], "RPE 7, facile.");
   assert.equal(withNote.currentIndex, 0);
+});
+
+test("builds a completed action record from the click-time remaining timer", () => {
+  const app = loadApp();
+  const workout = app.normalizeWorkout({
+    title: "Completion",
+    steps: [
+      { id: "swing", k: "work", b: "A", t: "Swing", d: "16 reps", kg: 16, reps: 16, s: 32 },
+      { id: "pause", k: "rest", b: "A", t: "Pause", s: 60 },
+    ],
+  });
+  const state = {
+    ...app.createInitialState(workout),
+    remainingSeconds: 12,
+    notes: {
+      swing: "Propres.",
+    },
+  };
+
+  const record = app.buildStepCompletionRecord(state, "2026-06-12T10:00:00.000Z");
+
+  assert.equal(record.date, "2026-06-12");
+  assert.equal(record.completedAt, "2026-06-12T10:00:00.000Z");
+  assert.equal(record.index, 1);
+  assert.equal(record.stepId, "swing");
+  assert.equal(record.title, "Swing");
+  assert.equal(record.kind, "work");
+  assert.equal(record.targetSeconds, 32);
+  assert.equal(record.elapsedSeconds, 20);
+  assert.equal(record.remainingSeconds, 12);
+  assert.equal(record.weightKg, 16);
+  assert.equal(record.reps, 16);
+  assert.equal(record.volumeKg, 256);
+  assert.equal(record.note, "Propres.");
+});
+
+test("stores completed actions per workout program and local session date", () => {
+  const app = loadApp();
+  const storage = createMemoryStorage();
+  const workout = app.normalizeWorkout({
+    title: "Program A",
+    steps: [
+      { id: "row", k: "work", b: "A", t: "Row", d: "8 reps", kg: 16, reps: 8, s: 24 },
+    ],
+  });
+  const state = {
+    ...app.createInitialState(workout),
+    remainingSeconds: 4,
+  };
+
+  const record = app.recordCompletedStep(state, storage, "2026-06-12T10:00:00.000Z");
+  const key = app.completedActionsStorageKey(workout, "2026-06-12T10:00:00.000Z");
+  const otherDateKey = app.completedActionsStorageKey(workout, "2026-06-13T10:00:00.000Z");
+  const saved = JSON.parse(storage.getItem(key));
+
+  assert.equal(record.elapsedSeconds, 20);
+  assert.equal(saved.date, "2026-06-12");
+  assert.equal(saved.workoutTitle, "Program A");
+  assert.equal(saved.actions.length, 1);
+  assert.equal(saved.actions[0].stepId, "row");
+  assert.equal(saved.actions[0].elapsedSeconds, 20);
+  assert.equal(storage.getItem(otherDateKey), null);
 });
 
 test("forced rests do not reassign notes to shifted workout steps", () => {
@@ -320,6 +548,31 @@ test("builds a dated live session JSON for AI storage", () => {
   assert.equal(journal.steps[0].note, "RPE 8");
   assert.equal(journal.steps[0].video, "https://www.youtube-nocookie.com/embed/aNDUbH_Uv4g");
   assert.equal(journal.steps[1].note, "");
+});
+
+test("includes stored completed actions in the live session JSON", () => {
+  const app = loadApp();
+  const workout = app.normalizeWorkout({
+    title: "Kettlebell",
+    steps: [
+      { id: "swing", k: "work", b: "A", t: "Swing", kg: 16, reps: 16, s: 32 },
+    ],
+  });
+  const state = app.createInitialState(workout);
+  const completion = app.buildStepCompletionRecord(
+    {
+      ...state,
+      remainingSeconds: 10,
+    },
+    "2026-05-24T12:00:00.000Z",
+  );
+
+  const journal = app.buildLiveSessionJson(state, app.createSessionClock({ date: "2026-05-24", now: 1000 }), "2026-05-24T12:00:00.000Z", [completion]);
+
+  assert.equal(journal.completedActions.length, 1);
+  assert.equal(journal.completedActions[0].stepId, "swing");
+  assert.equal(journal.completedActions[0].elapsedSeconds, 22);
+  assert.equal(journal.completedActions[0].volumeKg, 256);
 });
 
 test("default workout avoids pushups", () => {

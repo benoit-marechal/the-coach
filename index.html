@@ -51,6 +51,20 @@
             <p id="sessionStatus" class="eyebrow">Seance du jour</p>
             <div id="globalTimer" class="global-timer">00:00</div>
           </div>
+          <div class="session-metrics" aria-label="Métriques de charge de la séance">
+            <div>
+              <span>Total soulevé</span>
+              <strong id="totalWeight">0 kg</strong>
+            </div>
+            <div>
+              <span>Rythme séance</span>
+              <strong id="kgPerMinute">0 kg/min</strong>
+            </div>
+            <div>
+              <span>Temps cible</span>
+              <strong id="targetDuration">00:00</strong>
+            </div>
+          </div>
           <div class="session-actions" aria-label="Play pause stop">
             <button id="playSession" class="session-command primary" type="button">Play</button>
             <button id="pauseSession" class="session-command" type="button">Pause</button>
@@ -75,7 +89,7 @@
             <h2 id="title">Chargement</h2>
             <p id="detail" class="detail"></p>
             <div id="timer" class="timer">00:00</div>
-            <p id="tempo" class="tempo" hidden>A ton rythme</p>
+            <p id="tempo" class="tempo" hidden>Rythme cible non renseigne</p>
             <p id="cue" class="cue"></p>
 
             <section class="controls" aria-label="Actions">
@@ -100,7 +114,7 @@
             <div class="section-head">
               <div>
                 <p class="eyebrow">Plan complet</p>
-                <h2>35 actions</h2>
+                <h2 id="programActionCount">0 actions</h2>
               </div>
               <span class="hint">Clique une action ou une pause</span>
             </div>
@@ -139,6 +153,19 @@
       </section>
 
       <section class="annexes" aria-label="Informations annexes">
+        <section class="panel program-panel">
+          <div class="section-head">
+            <h2>Programmes locaux</h2>
+            <button id="exportPrograms" type="button">Exporter</button>
+          </div>
+          <div class="program-controls">
+            <select id="programSelect" aria-label="Programme local"></select>
+            <button id="loadProgram" type="button">Charger</button>
+            <button id="saveProgram" type="button">Sauver actuel</button>
+          </div>
+          <textarea id="programLibraryExport" class="mono-area copy-area" rows="10" readonly title="Cliquer pour copier"></textarea>
+        </section>
+
         <section class="panel">
           <div class="section-head">
             <h2>Programme de séance</h2>
@@ -168,6 +195,17 @@
           <textarea id="exampleJson" class="mono-area" rows="10" readonly></textarea>
         </section>
       </section>
+
+      <dialog id="skipDialog" class="skip-dialog" aria-labelledby="skipDialogTitle">
+        <form method="dialog">
+          <h2 id="skipDialogTitle">Étape non comptée</h2>
+          <p>Êtes-vous sûr de ne pas avoir fait cette étape ? Elle ne sera pas comptée dans la séance vraiment réalisée.</p>
+          <div class="dialog-actions">
+            <button id="cancelSkip" type="button">Annuler</button>
+            <button id="confirmSkip" class="primary" type="button">Oui, passer</button>
+          </div>
+        </form>
+      </dialog>
     </main>
   </body>
 </html>
